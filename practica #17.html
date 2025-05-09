@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lectura y Voltaje desde Particle</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    .valor { font-size: 2.5em; color: #4CAF50; }
+    .etiqueta { font-size: 1.2em; margin-top: 30px; color: #333; }
+  </style>
+</head>
+<body>
+  <h1>Datos del dispositivo Particle</h1>
+
+  <div class="etiqueta">Lectura:</div>
+  <div class="valor" id="lectura">Cargando...</div>
+
+  <div class="etiqueta">Voltaje (V):</div>
+  <div class="valor" id="voltaje">Cargando...</div>
+
+  <script>
+    const deviceID = "0a10aced202194944a055c30";
+    const accessToken = "ed2b4b082b6e7f701101ccb4b469675e45735485";
+
+    function obtenerVariable(nombre, elementoID) {
+      const url = `https://api.particle.io/v1/devices/${deviceID}/${nombre}`;
+      fetch(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById(elementoID).textContent = data.result;
+      })
+      .catch(err => {
+        document.getElementById(elementoID).textContent = "Error";
+        console.error(`Error al obtener ${nombre}:`, err);
+      });
+    }
+
+    function actualizarLecturas() {
+      obtenerVariable("lectura", "lectura");
+      obtenerVariable("voltaje", "voltaje");
+    }
+
+    actualizarLecturas();
+    setInterval(actualizarLecturas, 3000);
+  </script>
+</body>
+</html>
